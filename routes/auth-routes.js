@@ -31,7 +31,7 @@ const User = require ('../models/user-model');
      res.status(500).json({ message: 'somthing went wrong'});
 
    }
-   req.login(TheUser,(erro)=> {
+   req.login(foundUser,(erro)=> {
      res.status(200).json(TheUser);
    });
      });//theUset.save()
@@ -39,23 +39,24 @@ const User = require ('../models/user-model');
  });//GET/signup
   module.exports = router;
 
-  router.post ('/login', (req, res, next )=> {
+  router.post('/login', (req, res, next )=> {
 const username = req.body.username;
 const password = req.body.password;
 
-User.findOne ({usernma: username }, (err, foundUser)=> {
-if (foundUser === null ){
+User.findOne ({username: username }, (err, foundUser)=> {
+if (!foundUser ){
   res.status(400).json({message: 'incorrect username'});
   return;
 
 }
 
-if (!bcrypt.compareSync(password, foundUser.password)){
+if (!bcrypt.compareSync(password, foundUser.password)) {
   res.status(400).json({massage:"incorretc pasword"});
   return;
 }
 req.login(foundUser, (err) => {
-  req.status(200).json(foundUser);
+  foundUser.password = undefined;
+  res.status(200).json(foundUser);
 });
   });
     });
