@@ -1,11 +1,11 @@
 const passport = require('passport');
 
-const User = require('../models/user');
+const User = require('../models/user-model');
 
- passport.serializeUser(()=>:{
-   cb(null.loggerInUser._id);
- }
-);
+// serialize :save only the aID  of the usr document i  the session
+ passport.serializeUser((loggedInUser)=>{
+   cb(null.loggedInUser._id);
+ });
 //desserialize :retetrive the full user details from  the data base using ID
 //(the suser is store in the session)
 passport.deserializeUser((userIdFromSession, cd)=>{
