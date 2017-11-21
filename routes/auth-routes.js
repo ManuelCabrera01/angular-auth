@@ -1,9 +1,8 @@
 const express = require ('express');
 const bcrypt  = require ('bcrypt');
-
 const User = require ('../models/user-model');
-
  const router = express.Router();
+
  router.post('/signup', (req, res, next)=>{
    const username= req.body.username; //username from the user model schema = username from the form
    const password = req.body.password;
@@ -29,9 +28,10 @@ const User = require ('../models/user-model');
  TheUser.save((err) => {
    if (err) {
      res.status(500).json({ message: 'somthing went wrong'});
-
    }
+
    req.login(foundUser,(erro)=> {
+     TheUser.password= undefined;
      res.status(200).json(TheUser);
    });
      });//theUset.save()
@@ -60,3 +60,26 @@ req.login(foundUser, (err) => {
 });
   });
     });
+
+    router.post('/logout', (req, res, next) => {
+  req.logout();
+  res.status(200).json({ message: 'Success' });
+});
+
+router.get('/loggedin', (req, res, next) => {
+  if (req.isAuthenticated()) {
+    res.status(200).json(req.user);
+    return;
+  }
+
+  res.status(403).json({ message: 'Unauthorized' });
+});
+
+router.get('/private', (req, res, next) => {
+  if (req.isAuthenticated()) {
+    res.json({ message: 'This is a private message' });
+    return;
+  }
+
+  res.status(403).json({ message: 'Unauthorized ' });
+});
